@@ -578,7 +578,7 @@ function fact(i){
   if(i===1)return pair('Multitâche',fmt(c.a[0]),'Focus',fmt(c.a[1]))+`<p class="axis">Délai de livraison du client A (${who}).</p>`;
   if(i===2)return pair('Multitâche',num(c.e[0])+' erreur'+(c.e[0]>1?'s':''),'Focus',num(c.e[1])+' erreur'+(c.e[1]>1?'s':''))+`<p class="axis">Erreurs par manche (${who}).</p>`;
   if(i===3)return c.team?`<div class="bigf">${c.s} sur ${c.n}</div><p class="axis">${c.s>1?'ont été ralentis':'a été ralenti'} par les interruptions (${c.d>=0?'+':'−'}${fmt(Math.abs(c.d))} en médiane).</p>`:`<div class="bigf">${c.d>=0?'+':'−'}${fmt(Math.abs(c.d))}</div><p class="axis">par rapport à la manche 2, avec ${c.p} message${c.p>1?'s':''} à traiter.</p>`;
-  return '<p class="key">Commencer moins, finir plus.</p>';
+  return '<p class="key">Arrêtons de commencer, commençons à finir.</p><p class="axis">« Stop starting, start finishing »</p>';
 }
 function renderDeb(i,anim){
   dq=Math.max(0,Math.min(QS.length-1,i|0));
