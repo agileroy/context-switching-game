@@ -14,15 +14,20 @@ Projets : **A** les lettres de A à J, **B** les nombres de 1 à 10, **C** les c
 
 Jouer : **https://agileroy.github.io/context-switching-game/**
 
-## Animer une session (15 min)
+## Deux modes
 
-1. **2 min** : chacun ouvre le lien sur son ordinateur ou son téléphone. Ne pas annoncer l'objectif.
-2. **6 min** : les trois manches, lancées en même temps par tout le monde.
-3. **1 min** : chacun lit ses résultats. Faire remonter quelques chiffres : délai du projet A en manche 1 et 2, délai moyen, erreurs.
-4. **6 min** : débrief avec les questions affichées à la fin, conclure sur une action concrète.
+- **Jouer seul** : pour découvrir le jeu ou le tester avant un atelier.
+- **En équipe** : l'animateur crée une salle et partage le lien ou le QR code. Chacun joue de son côté, à son rythme ; les plus rapides patientent sur un écran d'attente. Quand tout le monde a terminé, l'animateur révèle les résultats de l'équipe, affichés en même temps chez tous : médianes par manche, part des participants ralentis par les interruptions, et un nuage de points où chacun retrouve son parcours (les autres restent anonymes).
 
-Les résultats restent sur l'appareil de chaque joueur (rien n'est envoyé nulle part). Le bouton « Copier mes résultats » permet de les coller dans le chat de la réunion.
+## Animer une session en équipe (15 min)
+
+1. **2 min** : créer une salle et projeter son écran. Chacun ouvre le lien ou scanne le QR code et entre son prénom. Ne pas annoncer l'objectif.
+2. **6 min** : chacun joue les trois manches. L'écran animateur montre l'avancement de chacun.
+3. **1 min** : quand tout le monde a terminé, cliquer sur « Révéler les résultats de l'équipe ».
+4. **6 min** : débrief avec le nuage de points et les questions proposées, conclure sur une action concrète.
 
 ## Technique
 
-Un seul fichier `index.html`, sans dépendance ni build. Chaque push sur `main` publie le site sur GitHub Pages via `.github/workflows/deploy.yml`.
+Un seul fichier `index.html`, sans build. Le mode équipe utilise Firebase Realtime Database (connexion anonyme), chargé depuis le CDN de Firebase uniquement quand on crée ou rejoint une salle.
+
+Le projet Firebase `limit-wip-vleroy` est partagé avec [Rush en cuisine](https://github.com/agileroy/wip-limit-game) : les règles de sécurité de ce jeu sont dans la section `csRooms` de son fichier `database.rules.json`, publié par son workflow. Chaque joueur n'écrit que ses propres résultats ; seul l'animateur peut révéler les résultats ou retirer un participant. Chaque push sur `main` publie le site sur GitHub Pages via `.github/workflows/deploy.yml`.

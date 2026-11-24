@@ -7,9 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* VOICE: atelier ludique mais net, phrases courtes, tutoiement d'équipe évité (vous)
+/* VOICE: atelier ludique mais net, phrases courtes, vouvoiement
    IDEA: un tableau de trois colonnes « projets », un projecteur jaune sur la seule case qui compte
-   PICTURE: le plateau de jeu lui-même, puis un diagramme de livraison par client
+   PICTURE: le plateau de jeu lui-même, puis le nuage de points de l'équipe et le diagramme de livraison
    COLOUR and TYPE: bande bleu électrique, fond blanc, projecteur jaune ; projets bleu/rose/sarcelle ; Archivo 800 + Inter
    LAYOUT: bande titre avec étapes, une colonne de jeu centrée, résultats en rangées pleine largeur */
 :root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f1220);--ink:light-dark(#0e1430,#eef0ff);--mut:light-dark(#596080,#a6abc6);--card:light-dark(#f2f4fb,#181c31);--line:light-dark(#dde2ef,#2b3150);--blue:light-dark(#2f5bff,#3a63ff);--a:#2f5bff;--b:#f0457a;--c:#00a094;--hi:#ffd23f;--bad:#e5383b}
@@ -23,6 +23,7 @@ h1,h2,h3{font-family:Archivo,Inter,sans-serif;line-height:1.05;text-wrap:balance
 .hero p{margin:0 0 6px;opacity:.85}
 .hero h1{font-size:clamp(34px,6vw,52px);font-weight:800}
 .steps{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:20px 0 0;counter-reset:s}
+.steps[hidden]{display:none}
 .steps li{counter-increment:s;padding:6px 12px 6px 8px;border-radius:99px;background:rgba(255,255,255,.14);font-size:14px;white-space:nowrap}
 .steps li::before{content:counter(s);display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.22);margin-right:8px;font-weight:600;font-size:13px}
 .steps li.on{background:var(--hi);color:#0e1430;font-weight:600}.steps li.on::before{background:#0e1430;color:var(--hi)}
@@ -30,13 +31,23 @@ h1,h2,h3{font-family:Archivo,Inter,sans-serif;line-height:1.05;text-wrap:balance
 .lead{font-size:clamp(18px,2.2vw,21px);max-width:62ch;margin:12px 0 0;color:var(--mut)}
 h2{font-size:clamp(28px,4vw,40px);font-weight:800}
 h3{font-size:20px;font-weight:600}
-.btn{font:600 17px Inter,sans-serif;min-height:52px;padding:0 26px;border-radius:12px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.h3b{font-size:22px}
+.btn{font:600 17px Inter,sans-serif;min-height:52px;padding:0 26px;border-radius:12px;border:0;background:var(--ink);color:var(--bg);cursor:pointer;white-space:nowrap}
 .btn:hover{filter:brightness(1.15)}.btn.alt{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--line)}
-.btn:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--hi);outline-offset:3px}
+.btn:disabled{opacity:.35;cursor:default;filter:none}
+.btn.go{background:var(--hi);color:#0e1430}
+.btn:focus-visible,input:focus-visible,summary:focus-visible,.link:focus-visible,.x:focus-visible{outline:3px solid var(--hi);outline-offset:3px}
 .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:28px}
 .projs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:28px}
 .proj{background:var(--card);border-radius:14px;padding:18px;border-top:6px solid var(--pc)}
 .proj b{display:block;font:800 22px Archivo,sans-serif}.proj span{color:var(--mut);font-size:15px}
+.choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:28px}
+.choice{border:2px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.choice p{margin:0;color:var(--mut)}
+.choice .btn,.choice form{margin-top:auto}
+.choice.main{border-color:var(--blue);box-shadow:inset 0 6px 0 var(--blue)}
+.inl{display:flex;gap:8px;flex-wrap:wrap}.inl .field{flex:1 1 120px}
+.field{font:600 18px Inter,sans-serif;height:52px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:20px;align-items:center}
 .chip{min-width:44px;height:44px;padding:0 8px;display:inline-grid;place-items:center;border-radius:10px;font:800 18px Archivo,sans-serif;color:#fff;background:var(--pc)}
 .chip.more{background:none;color:var(--mut);font-weight:600}
@@ -67,12 +78,12 @@ details ol{padding-left:22px}details li{margin:6px 0}
 .cell.act{background:var(--hi);box-shadow:0 0 0 2px #0e1430 inset}
 .cell.err{background:var(--bad)}
 .count{position:absolute;inset:0;display:grid;place-items:center;font:800 120px Archivo,sans-serif;color:var(--ink);background:color-mix(in srgb,var(--bg) 80%,transparent);border-radius:14px}
-.link{background:none;border:0;color:var(--mut);text-decoration:underline;font:inherit;font-size:14px;cursor:pointer;min-height:44px}
+.link{background:none;border:0;color:var(--mut);text-decoration:underline;font:inherit;font-size:14px;cursor:pointer;min-height:44px;padding:0}
 .ping{position:fixed;inset:0;background:rgba(10,14,35,.55);display:grid;place-items:center;padding:16px;z-index:9}
 .ping[hidden]{display:none}
 .msg{background:var(--bg);border-radius:18px;padding:22px;width:min(420px,100%);box-shadow:0 20px 60px rgba(0,0,0,.35);border-top:8px solid var(--hi)}
 .msg .who{display:flex;gap:10px;align-items:center;font-weight:600}
-.msg .av{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font:800 16px Archivo,sans-serif}
+.av{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font:800 15px Archivo,sans-serif;flex:none}
 .msg p{font-size:18px;margin:14px 0}
 .figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:26px}
 .fig3{background:var(--card);border-radius:14px;padding:18px}
@@ -80,32 +91,66 @@ details ol{padding-left:22px}details li{margin:6px 0}
 .fig3 .big{font:800 clamp(30px,4vw,40px)/1.1 Archivo,sans-serif;margin:8px 0 10px;white-space:nowrap}
 .fig3 dl{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:0;font-size:15px}
 .fig3 dt{color:var(--mut)}.fig3 dd{margin:0;text-align:right;font-weight:600;white-space:nowrap}
-.gantt{margin-top:34px}
+.gantt{margin-top:40px}
 .lane{margin-top:22px}.lane h3{font-size:17px;margin-bottom:8px}
 .gb{position:relative;height:30px;background:var(--card);border-radius:7px;margin-top:6px}
 .gf{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:var(--pc);transition:width .8s ease}
 .gl{position:absolute;top:0;line-height:30px;font-size:14px;font-weight:600;white-space:nowrap}
 .gl.in{color:#fff}
-.axis{color:var(--mut);font-size:14px;margin-top:10px}
+.axis{color:var(--mut);font-size:14px;margin:10px 0 0}
+.fig{position:relative;min-height:360px;margin-top:14px;background:var(--card);border-radius:14px}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.dots .gr{stroke:var(--line);stroke-width:1}.dots .tx{fill:var(--mut);font:13px Inter,sans-serif}.dots .cx{fill:var(--ink);font:600 13px Inter,sans-serif}
+.dots .pl{fill:none;stroke:var(--mut);stroke-opacity:.45;stroke-width:1.5}.dots .pt{fill:var(--ink);fill-opacity:.7}
+.dots .md{stroke:var(--blue);stroke-width:5;stroke-linecap:round}
+.dots .mel{fill:none;stroke:var(--hi);stroke-width:3.5}.dots .mep{fill:var(--hi);stroke:#0e1430;stroke-width:2}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:14px;color:var(--mut);margin-top:10px}
+.legend i{display:inline-block;width:18px;height:5px;border-radius:3px;vertical-align:middle;margin-right:6px}
 .qs{counter-reset:q;list-style:none;padding:0;display:grid;gap:12px;margin-top:18px}
 .qs li{background:var(--card);border-radius:14px;padding:14px 18px 14px 58px;position:relative;font-size:17px}
 .qs li::before{counter-increment:q;content:counter(q);position:absolute;left:16px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--hi);color:#0e1430;display:grid;place-items:center;font:800 15px Archivo,sans-serif}
 .key{font:800 clamp(22px,3vw,28px)/1.2 Archivo,sans-serif;margin-top:30px;padding:20px;border-radius:14px;background:var(--blue);color:#fff}
-.sec{margin-top:44px}
-@media(max-width:600px){.projs,.figs{grid-template-columns:minmax(0,1fr)}.board{gap:6px}.col{padding:6px}.head small{margin-left:0;width:100%}.head b{font-size:15px}.cell{font-size:15px;height:30px}.count{font-size:80px}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.sec{margin-top:48px}
+.split{border-top:2px solid var(--line);padding-top:36px}
+.hostgrid{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:20px;margin-top:26px;align-items:start}
+.share{background:var(--card);border-radius:16px;padding:18px;display:grid;gap:12px}
+.qr{background:#fff;border-radius:10px;padding:12px;aspect-ratio:1;display:grid;place-items:center}.qr svg{width:100%;height:auto}
+.qr:empty{display:none}
+.bigcode{font:800 40px/1 Archivo,sans-serif;letter-spacing:.04em;white-space:nowrap}
+.url{font-size:14px;color:var(--mut);overflow-wrap:anywhere}
+.plist{background:var(--card);border-radius:16px;padding:18px}
+.phead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:baseline}
+.plist ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.plist li{display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:12px;padding:8px 8px 8px 10px}
+.plist li .nm{font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pips{display:flex;gap:4px;flex:none}.pips i{width:22px;height:8px;border-radius:4px;background:var(--line)}.pips i.on{background:var(--c)}
+.pst{font-size:13px;color:var(--mut);width:84px;text-align:right;white-space:nowrap}.pst.ok{color:var(--ink);font-weight:600}
+.x{background:none;border:0;color:var(--mut);cursor:pointer;min-width:44px;min-height:44px;border-radius:10px;font:600 14px Inter,sans-serif}
+.x:hover{background:var(--card)}.x.arm{color:var(--bad)}
+.empty{color:var(--mut);padding:20px 4px}
+.meter{height:12px;border-radius:6px;background:var(--card);overflow:hidden;margin-top:22px;max-width:520px}
+.meter div{height:100%;width:0;background:var(--c);transition:width .6s ease}
+.loom{display:grid;grid-template-columns:repeat(3,44px);gap:8px;margin-bottom:26px}
+.loom div{display:grid;gap:4px}
+.loom span{height:10px;border-radius:3px;background:var(--card);animation:lf 7.5s infinite;animation-delay:calc(var(--i)*.2s)}
+@keyframes lf{0%,3%{background:var(--card)}8%,84%{background:var(--pc)}92%,100%{background:var(--card)}}
+.tip{margin-top:30px;border-radius:16px;padding:20px;background:var(--card);max-width:640px;border-left:6px solid var(--hi)}
+.tip b{font-family:Archivo,sans-serif}.tip p{margin:6px 0 0;font-size:17px;transition:opacity .4s}
+@media(max-width:760px){.choices,.hostgrid{grid-template-columns:minmax(0,1fr)}.share{grid-template-columns:120px minmax(0,1fr);align-items:center}.bigcode{font-size:30px}}
+@media(max-width:600px){.projs,.figs{grid-template-columns:minmax(0,1fr)}.board{gap:6px}.col{padding:6px}.head small{margin-left:0;width:100%}.head b{font-size:15px}.cell{font-size:15px;height:30px}.count{font-size:80px}.pips{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.loom span:nth-child(-n+6){background:var(--pc)}}
 </style>
 </head>
 <body>
 <header class="band hero"><div class="wrap">
   <p>Atelier context switching · environ 15 minutes</p>
   <h1>Une chose à la fois</h1>
-  <ol class="steps" id="steps"><li>Multitâche</li><li>Focus</li><li>Focus interrompu</li><li>Résultats</li></ol>
+  <ol class="steps" id="steps" hidden><li>Multitâche</li><li>Focus</li><li>Focus interrompu</li><li>Résultats</li></ol>
 </div></header>
 
 <main class="band"><div class="wrap">
 
-<section id="v-intro">
+<section id="v-home">
   <h2>Trois projets, trois clients, un seul cerveau.</h2>
   <p class="lead">Vous allez livrer trois petits projets, trois fois, en changeant seulement la façon de travailler. Le chrono enregistre le moment où chaque client reçoit son projet.</p>
   <div class="projs">
@@ -113,17 +158,66 @@ details ol{padding-left:22px}details li{margin:6px 0}
     <div class="proj" style="--pc:var(--b)"><b>Projet B</b><span>Les nombres de 1 à 10</span></div>
     <div class="proj" style="--pc:var(--c)"><b>Projet C</b><span>Les chiffres romains de I à X</span></div>
   </div>
-  <p class="note">Tapez la valeur de la case en jaune. Une bonne réponse passe toute seule à la case suivante, une mauvaise compte comme une erreur. Ça marche au clavier comme sur téléphone.</p>
-  <div class="row"><button class="btn" id="go">Commencer la manche 1</button></div>
+  <div class="choices">
+    <div class="choice main">
+      <h3>Animer une équipe</h3>
+      <p>Créez une salle et partagez le lien. Chacun joue de son côté, puis vous révélez les résultats de tout le groupe.</p>
+      <button class="btn" id="mk">Créer une salle</button>
+      <p class="axis" id="mkm" hidden></p>
+    </div>
+    <div class="choice">
+      <h3>Rejoindre une salle</h3>
+      <p>Entrez le code donné par l'animateur.</p>
+      <form class="inl" id="jcf"><input class="field" id="jc" placeholder="Code" aria-label="Code de la salle" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="8"><button class="btn alt">Rejoindre</button></form>
+    </div>
+    <div class="choice">
+      <h3>Jouer seul</h3>
+      <p>Pour découvrir le jeu, ou le tester avant un atelier.</p>
+      <button class="btn alt" id="go">Jouer seul</button>
+    </div>
+  </div>
+  <p class="note">Pendant le jeu, tapez la valeur de la case en jaune. Une bonne réponse passe toute seule à la case suivante, une mauvaise compte comme une erreur. Ça marche au clavier comme sur téléphone.</p>
   <details>
     <summary>Guide de l'animateur (15 min)</summary>
     <ol>
-      <li><b>2 min</b> : chacun ouvre ce lien sur son ordinateur ou son téléphone. Ne dites rien sur l'objectif de l'atelier.</li>
-      <li><b>6 min</b> : les trois manches s'enchaînent. Tout le monde lance la même manche en même temps, ça crée de l'émulation.</li>
-      <li><b>1 min</b> : chacun lit ses résultats. Faites remonter quelques chiffres à voix haute : le délai du projet A en manche 1 et en manche 2, le délai moyen et les erreurs.</li>
-      <li><b>6 min</b> : débriefez avec les questions affichées à la fin, puis terminez sur une action concrète.</li>
+      <li><b>2 min</b> : créez une salle et projetez votre écran. Chacun ouvre le lien ou scanne le QR code, puis entre son prénom. Ne dites rien sur l'objectif de l'atelier.</li>
+      <li><b>6 min</b> : chacun joue les trois manches à son rythme. Votre écran montre où en est chaque participant ; les plus rapides patientent sur un écran d'attente.</li>
+      <li><b>1 min</b> : quand tout le monde a terminé, cliquez sur « Révéler les résultats de l'équipe ». Les résultats s'affichent en même temps chez tout le monde.</li>
+      <li><b>6 min</b> : débriefez avec le nuage de points (presque tous les traits montent avec les interruptions) et les questions proposées, puis terminez sur une action concrète.</li>
     </ol>
   </details>
+</section>
+
+<section id="v-join" hidden>
+  <h2 id="jt"></h2>
+  <p class="lead">Chacun joue de son côté, à son rythme. À la fin, l'animateur révèle les résultats de toute l'équipe.</p>
+  <form id="jf" hidden>
+    <div class="typer"><label for="jn">Votre prénom ou un pseudo</label></div>
+    <div class="inl" style="margin-top:8px;max-width:520px"><input class="field" id="jn" maxlength="24" autocomplete="given-name" required><button class="btn">Entrer dans la salle</button></div>
+  </form>
+  <p class="note" id="jm" hidden></p>
+  <button class="link" id="jhome">Retour à l'accueil</button>
+</section>
+
+<section id="v-host" hidden>
+  <h2>Votre salle est ouverte</h2>
+  <p class="lead">Partagez le lien ou le QR code. Chacun joue de son côté ; révélez les résultats de l'équipe quand tout le monde a terminé.</p>
+  <div class="hostgrid">
+    <div class="share">
+      <div class="qr" id="qr"></div>
+      <div style="display:grid;gap:10px">
+        <div><div class="axis" style="margin:0">Code</div><div class="bigcode" id="hc"></div></div>
+        <div class="url" id="hu"></div>
+        <button class="btn alt" id="hcopy">Copier le lien</button>
+      </div>
+    </div>
+    <div class="plist">
+      <div class="phead"><h3 id="hn">En attente des participants</h3><span class="axis" style="margin:0" id="hd"></span></div>
+      <ul id="hp"></ul>
+    </div>
+  </div>
+  <div class="row"><button class="btn go" id="reveal" disabled>Révéler les résultats de l'équipe</button><span class="axis" style="margin:0" id="rn"></span></div>
+  <p class="axis">Vous pouvez fermer cette page et revenir par le même lien depuis ce navigateur : vous restez l'animateur.</p>
 </section>
 
 <section id="v-brief" hidden>
@@ -150,14 +244,43 @@ details ol{padding-left:22px}details li{margin:6px 0}
   <button class="link" id="restart">Recommencer cette manche</button>
 </section>
 
+<section id="v-wait" hidden>
+  <div class="loom" id="loom" aria-hidden="true"></div>
+  <h2>Terminé, bravo !</h2>
+  <p class="lead">Les résultats de l'équipe s'afficheront ici dès que l'animateur les révélera. Pas besoin de recharger la page.</p>
+  <div class="meter"><div id="wb"></div></div>
+  <p class="axis" id="wt"></p>
+  <p class="note" id="we" hidden>Vos résultats n'ont pas pu être envoyés. <button class="link" id="wr">Réessayer</button></p>
+  <div class="tip"><b>En attendant</b><p id="tip"></p></div>
+</section>
+
 <section id="v-res" hidden>
-  <h2 id="rt"></h2>
-  <p class="lead" id="rl"></p>
-  <div class="figs" id="figs"></div>
-  <div class="gantt">
-    <h3 style="font-size:22px">Quand chaque client a-t-il été livré ?</h3>
-    <p class="axis">Les trois clients attendent dès le top départ. Plus la barre est longue, plus le client a attendu.</p>
-    <div id="lanes"></div>
+  <div id="teamSec" hidden>
+    <h2 id="tt"></h2>
+    <p class="lead" id="tl"></p>
+    <p class="axis" id="tn"></p>
+    <div class="figs" id="tfigs"></div>
+    <div class="sec" style="margin-top:40px">
+      <h3 class="h3b">Chaque point est un participant</h3>
+      <p class="axis">Temps total de chaque manche. Les traits relient les trois manches d'une même personne.</p>
+      <div class="fig dots" id="dots"><svg role="img" aria-label="Temps total de chaque participant pour les trois manches"></svg></div>
+      <div class="legend"><span><i style="background:var(--blue)"></i>Médiane de l'équipe</span><span id="lgme" hidden><i style="background:var(--hi)"></i>Votre parcours</span></div>
+    </div>
+    <div class="gantt">
+      <h3 class="h3b">Quand chaque client a-t-il été livré ?</h3>
+      <p class="axis">Médiane de l'équipe. Les trois clients attendent dès le top départ : plus la barre est longue, plus le client a attendu.</p>
+      <div id="tlanes"></div>
+    </div>
+  </div>
+  <div id="meSec">
+    <h2 id="mt"></h2>
+    <p class="lead" id="ml"></p>
+    <div class="figs" id="mfigs"></div>
+    <div class="gantt">
+      <h3 class="h3b">Quand chaque client a-t-il été livré ?</h3>
+      <p class="axis">Les trois clients attendent dès le top départ. Plus la barre est longue, plus le client a attendu.</p>
+      <div id="mlanes"></div>
+    </div>
   </div>
   <div class="sec">
     <h2>Débrief</h2>
@@ -170,7 +293,11 @@ details ol{padding-left:22px}details li{margin:6px 0}
     </ol>
     <p class="key">Commencer moins, finir plus.</p>
   </div>
-  <div class="row"><button class="btn" id="copy">Copier mes résultats</button><button class="btn alt" id="again">Rejouer</button></div>
+  <div class="row">
+    <button class="btn alt" id="back" hidden>Retour au suivi de la salle</button>
+    <button class="btn" id="copy">Copier mes résultats</button>
+    <button class="btn alt" id="again">Rejouer seul</button>
+  </div>
 </section>
 
 </div></main>
@@ -198,14 +325,38 @@ const R=[
 ];
 const WHO=[['Julie','J'],['Marc','M'],['Sofiane','S'],['Le PO','PO'],['Votre manager','VM'],['Support','SU']];
 const WORDS=['SPRINT','BACKLOG','URGENT','BUDGET','CLIENT','DEMO','RELEASE','REVIEW'];
+const TIPS=[
+  "Gerald Weinberg estimait qu'avec deux projets en parallèle, on perd environ 20 % de son temps à changer de contexte. Avec trois projets, environ 40 %.",
+  "Les travaux de Gloria Mark (Université de Californie à Irvine) montrent qu'après une interruption, il faut en moyenne plus de 20 minutes pour revenir pleinement à sa tâche.",
+  "Le cerveau ne mène pas deux tâches conscientes en parallèle : il alterne. Chaque bascule a un coût, d'autant plus élevé que les tâches sont complexes (Rubinstein, Meyer et Evans, 2001).",
+  "Pensez à votre journée d'hier : sur combien de sujets différents avez-vous travaillé ?",
+  "Quelle est la dernière notification qui vous a fait changer de tâche aujourd'hui ?"
+];
+// Ces clés ne sont pas secrètes : la sécurité repose sur les règles de la base (dépôt wip-limit-game, section csRooms)
+const CFG={apiKey:'AIzaSyBEt3wbzx8Dy88rsY13MmZmPfHQA4vwXe4',authDomain:'limit-wip-vleroy.firebaseapp.com',databaseURL:'https://limit-wip-vleroy-default-rtdb.europe-west1.firebasedatabase.app',projectId:'limit-wip-vleroy',storageBucket:'limit-wip-vleroy.firebasestorage.app',messagingSenderId:'413880351970',appId:'1:413880351970:web:c47cb90b74cee7fefd72bb'};
+const FBV='11.10.0';
+const VIEWS=['home','join','host','brief','play','wait','res'];
 const fmt=ms=>(ms/1000).toFixed(1).replace('.',',')+' s';
+const num=n=>Number.isInteger(n)?String(n):n.toFixed(1).replace('.',',');
 const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const med=a=>{if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+const fcode=c=>c.length>4?c.slice(0,4)+'-'+c.slice(4):c;
+const ncode=s=>String(s).toUpperCase().replace(/[^A-Z0-9]/g,'');
 const inp=$('#in'),pin=$('#pin');
-let res=[],cur=0,g=null,raf=0;
+let res=[],cur=0,g=null,raf=0,mode='solo',view='home';
+let fb=null,code=null,room=null,unsub=null,tipT=0,tipI=0,lastKey='',saveFailed=false,dotsData=null;
 
-function show(id,step){for(const v of ['intro','brief','play','res'])$('#v-'+v).hidden=v!==id;[...$('#steps').children].forEach((li,k)=>li.className=k<step?'done':k===step?'on':'');window.scrollTo(0,0)}
+function show(id,step){
+  view=id;for(const v of VIEWS)$('#v-'+v).hidden=v!==id;
+  $('#steps').hidden=step<0;
+  [...$('#steps').children].forEach((li,k)=>li.className=k<step?'done':k===step?'on':'');
+  if(id!=='wait')clearInterval(tipT);
+  window.scrollTo(0,0);
+}
 function seq(r){const s=[];if(R[r].row){for(let i=0;i<10;i++)for(let p=0;p<3;p++)s.push([p,i])}else{for(let p=0;p<3;p++)for(let i=0;i<10;i++)s.push([p,i])}return s}
 
+/* ---------- Jeu ---------- */
 function brief(r){
   cur=r;
   const pv=res[r-1];
@@ -216,11 +367,9 @@ function brief(r){
   $('#bc').innerHTML=seq(r).slice(0,R[r].row?7:12).map(([p,i])=>`<span class="chip" style="--pc:${P[p].c}">${P[p].v[i]}</span>`).join('')+'<span class="chip more">…</span>'+(R[r].ping?'<span class="chip" style="--pc:var(--hi);color:#0e1430">+ messages</span>':'');
   show('brief',r);
 }
-
 function board(){
   $('#board').innerHTML=P.map((p,k)=>`<div class="col" id="col${k}" style="--pc:${p.c}"><div class="head"><i></i><b>${p.k} · ${p.name}</b><small id="st${k}">en attente</small></div><div class="cells">${p.v.map((_,i)=>`<div class="cell" id="c${k}-${i}"></div>`).join('')}</div></div>`).join('');
 }
-
 function start(r){
   clearTimeout(g&&g.pt);cancelAnimationFrame(raf);$('#ping').hidden=true;
   g={r,s:seq(r),pos:0,err:0,pings:0,pingMs:0,done:[0,0,0],t0:0,on:false,pt:0,pOpen:false};
@@ -236,9 +385,7 @@ function start(r){
     if(R[r].ping)sched(3500+Math.random()*4000);
   },800);
 }
-
 function tick(){if(!g.on)return;$('#tm').textContent=fmt(performance.now()-g.t0);raf=requestAnimationFrame(tick)}
-
 function mark(){
   document.querySelectorAll('.cell.act').forEach(c=>c.classList.remove('act'));
   document.querySelectorAll('.col.cur').forEach(c=>c.classList.remove('cur'));
@@ -246,7 +393,6 @@ function mark(){
   $(`#c${s[0]}-${s[1]}`).classList.add('act');$('#col'+s[0]).classList.add('cur');
   if(!g.done[s[0]])$('#st'+s[0]).textContent='en cours';
 }
-
 function check(enter){
   if(!g||!g.on||g.pOpen)return;
   const v=inp.value.trim().toUpperCase();if(!v)return;
@@ -263,7 +409,6 @@ function check(enter){
     const c=$(`#c${p}-${i}`);c.classList.add('err');setTimeout(()=>c.classList.remove('err'),300);
   }
 }
-
 function sched(ms){g.pt=setTimeout(openPing,ms)}
 function openPing(){
   if(!g.on)return;
@@ -283,33 +428,220 @@ function pingInput(){
     sched(5000+Math.random()*5000);
   }else if(!g.ping.a.startsWith(v)){pin.value='';pin.classList.remove('shake');void pin.offsetWidth;pin.classList.add('shake')}
 }
-
 function finish(){
   g.on=false;clearTimeout(g.pt);cancelAnimationFrame(raf);mark();
   const total=performance.now()-g.t0;$('#tm').textContent=fmt(total);inp.disabled=true;
-  res[g.r]={total,done:g.done.slice(),err:g.err,pings:g.pings,pingMs:g.pingMs};
-  setTimeout(()=>g.r<2?brief(g.r+1):results(),900);
+  const r=g.r;
+  res[r]={total:Math.round(total),done:g.done.map(Math.round),err:g.err,pings:g.pings,pingMs:Math.round(g.pingMs)};
+  if(mode==='team')saveRound(r);
+  setTimeout(()=>r<2?brief(r+1):(mode==='team'?waitView():soloResults()),900);
 }
 
-function results(){
-  const [m,f,i]=res,mx=Math.max(...res.map(r=>r.total));
-  const x=m.done[0]/f.done[0],gain=1-avg(f.done)/avg(m.done);
-  $('#rt').textContent=x>=1.2?`En focus, le client A a été livré ${x.toFixed(1).replace('.',',')} fois plus tôt.`:'Comparez vos trois manches.';
-  $('#rl').textContent=`En multitâche, les trois projets sont arrivés entre ${fmt(Math.min(...m.done))} et ${fmt(Math.max(...m.done))}. En focus, le délai moyen d'un client ${gain>0?'baisse de '+Math.round(gain*100)+' %':'ne baisse pas cette fois'}. Les interruptions ont ajouté ${fmt(Math.max(0,i.total-f.total))} par rapport à la manche 2.`;
-  $('#figs').innerHTML=res.map((r,k)=>`<div class="fig3"><h3>Manche ${k+1} · ${R[k].name}</h3><div class="big">${fmt(r.total)}</div><dl><dt>Délai moyen client</dt><dd>${fmt(avg(r.done))}</dd><dt>Erreurs</dt><dd>${r.err}</dd>${R[k].ping?`<dt>Messages traités</dt><dd>${r.pings} · ${fmt(r.pingMs)}</dd>`:''}</dl></div>`).join('');
-  $('#lanes').innerHTML=res.map((r,k)=>`<div class="lane"><h3>Manche ${k+1} · ${R[k].name}</h3>${P.map((p,j)=>{const pc=r.done[j]/mx*100,inn=pc>55;return `<div class="gb" style="--pc:${p.c}"><div class="gf" style="width:0" data-w="${pc}%"></div><span class="gl${inn?' in':''}" style="${inn?'left:12px':'left:calc('+pc+'% + 10px)'}">Client ${p.k} · ${fmt(r.done[j])}</span></div>`}).join('')}</div>`).join('');
-  show('res',3);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.gf').forEach(e=>e.style.width=e.dataset.w)));
+/* ---------- Résultats ---------- */
+function figsHTML(rs){
+  return rs.map((r,k)=>`<div class="fig3"><h3>Manche ${k+1} · ${R[k].name}</h3><div class="big">${fmt(r.total)}</div><dl><dt>Délai moyen client</dt><dd>${fmt(r.lead)}</dd><dt>Erreurs</dt><dd>${num(r.err)}</dd>${k===2?`<dt>Messages traités</dt><dd>${num(r.pings)} · ${fmt(r.pingMs)}</dd>`:''}</dl></div>`).join('');
+}
+function lanesHTML(rs){
+  const mx=Math.max(...rs.map(r=>Math.max(r.total,...r.done)));
+  return rs.map((r,k)=>`<div class="lane"><h3>Manche ${k+1} · ${R[k].name}</h3>${P.map((p,j)=>{const pc=r.done[j]/mx*100,inn=pc>55;return `<div class="gb" style="--pc:${p.c}"><div class="gf" style="width:0" data-w="${pc}%"></div><span class="gl${inn?' in':''}" style="${inn?'left:12px':'left:calc('+pc+'% + 10px)'}">Client ${p.k} · ${fmt(r.done[j])}</span></div>`}).join('')}</div>`).join('');
+}
+function grow(){requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.gf').forEach(e=>e.style.width=e.dataset.w)))}
+const withLead=rs=>rs.map(r=>({...r,lead:avg(r.done)}));
+
+function personal(team){
+  const [m,f,i]=withLead(res);
+  const x=m.done[0]/f.done[0],gain=1-f.lead/m.lead;
+  $('#mt').textContent=team?'Vos résultats':(x>=1.2?`En focus, le client A a été livré ${x.toFixed(1).replace('.',',')} fois plus tôt.`:'Comparez vos trois manches.');
+  $('#mt').style.fontSize=team?'clamp(24px,3vw,32px)':'';
+  $('#ml').textContent=`En multitâche, vos trois projets sont arrivés entre ${fmt(Math.min(...m.done))} et ${fmt(Math.max(...m.done))}. En focus, votre délai moyen par client ${gain>0?'baisse de '+Math.round(gain*100)+' %':'ne baisse pas cette fois'}. Les interruptions ont ${i.total>=f.total?'ajouté '+fmt(i.total-f.total):'retiré '+fmt(f.total-i.total)} par rapport à la manche 2.`;
+  $('#mfigs').innerHTML=figsHTML([m,f,i]);
+  $('#mlanes').innerHTML=lanesHTML([m,f,i]);
+}
+function soloResults(){
+  $('#teamSec').hidden=true;$('#meSec').hidden=false;$('#meSec').classList.remove('sec','split');
+  $('#copy').hidden=false;$('#back').hidden=true;
+  personal(false);show('res',3);grow();
+}
+function finishedPlayers(){
+  const ps=room&&room.players?room.players:{};
+  return Object.keys(ps).map(uid=>{const p=ps[uid],r=p.res||{};return {uid,name:p.name,round:p.round||0,r:[r[0],r[1],r[2]]}}).filter(p=>p.round>=3&&p.r.every(x=>x&&x.done));
+}
+function teamResults(force){
+  const host=room&&fb&&room.facilitator===fb.uid;
+  const list=finishedPlayers(),all=Object.keys((room&&room.players)||{}).length;
+  const key=list.length+'/'+all;
+  if(view==='res'&&!force&&key===lastKey)return;
+  lastKey=key;
+  $('#teamSec').hidden=false;$('#back').hidden=!host;$('#copy').hidden=host||res.length<3;
+  const n=list.length;
+  if(!n){$('#tt').textContent="Personne n'a encore terminé.";$('#tl').textContent='Les résultats apparaîtront dès qu\'un participant aura fini les trois manches.';$('#tn').textContent='';$('#tfigs').innerHTML='';$('#tlanes').innerHTML='';dotsData=null;drawDots()}
+  else{
+    const st=[0,1,2].map(k=>({total:med(list.map(p=>p.r[k].total)),lead:med(list.map(p=>avg(p.r[k].done))),err:med(list.map(p=>p.r[k].err||0)),pings:med(list.map(p=>p.r[k].pings||0)),pingMs:med(list.map(p=>p.r[k].pingMs||0)),done:[0,1,2].map(j=>med(list.map(p=>p.r[k].done[j])))}));
+    const a=list.filter(p=>p.r[1].done[0]<p.r[0].done[0]).length;
+    const s=list.filter(p=>p.r[2].total>p.r[1].total).length;
+    const d=med(list.map(p=>p.r[2].total-p.r[1].total));
+    $('#tt').textContent=`${a} participant${a>1?'s':''} sur ${n} ${a>1?'ont':'a'} livré le client A plus tôt en focus.`;
+    $('#tl').textContent=`${s} sur ${n} ${s>1?'ont été ralentis':'a été ralenti'} par les interruptions (${d>=0?'+':'−'}${fmt(Math.abs(d))} en médiane). En focus, le délai médian d'un client passe de ${fmt(st[0].lead)} à ${fmt(st[1].lead)}.`;
+    const u=all-n;
+    $('#tn').textContent=`Médianes de ${n} participant${n>1?'s':''}`+(u>0?` · ${u} n'${u>1?'ont':'a'} pas terminé et ${u>1?'ne sont pas comptés':"n'est pas compté"}`:'');
+    $('#tfigs').innerHTML=figsHTML(st);
+    $('#tlanes').innerHTML=lanesHTML(st);
+    dotsData={list,meds:st.map(x=>x.total),me:host?null:fb&&fb.uid};
+    $('#lgme').hidden=!list.some(p=>p.uid===dotsData.me);
+  }
+  const mine=!host&&res.length===3&&res.every(Boolean);
+  $('#meSec').hidden=!mine;
+  if(mine){$('#meSec').classList.add('sec','split');personal(true)}
+  if(view!=='res')show('res',host?-1:3);
+  drawDots();grow();
+}
+function drawDots(){
+  const s=$('#dots svg'),W=s.clientWidth,H=s.clientHeight;
+  if(!W||!dotsData){s.innerHTML='';return}
+  const {list,meds,me}=dotsData,narrow=W<520;
+  const l=narrow?40:52,r=16,t=18,b=narrow?34:44;
+  const mx=Math.max(...list.flatMap(p=>p.r.map(x=>x.total)),...meds)*1.08||1;
+  const step=[5000,10000,15000,20000,30000,60000,120000].find(v=>mx/v<=5)||300000;
+  const x=k=>l+(W-l-r)*(k+.5)/3,y=v=>t+(H-t-b)*(1-v/mx);
+  let h='';
+  for(let v=0;v<=mx;v+=step)h+=`<line class="gr" x1="${l}" x2="${W-r}" y1="${y(v)}" y2="${y(v)}"/><text class="tx" x="${l-8}" y="${y(v)+4}" text-anchor="end">${v/1000} s</text>`;
+  R.forEach((q,k)=>h+=`<text class="cx" x="${x(k)}" y="${H-b+22}" text-anchor="middle">${narrow?'Manche '+(k+1):'Manche '+(k+1)+' · '+q.name}</text>`);
+  const jit=(i,n)=>n<2?0:((i/(n-1))-.5)*Math.min(40,(W-l-r)/3*.35);
+  const others=list.filter(p=>p.uid!==me),mine=list.find(p=>p.uid===me);
+  others.forEach((p,i)=>{const pts=p.r.map((z,k)=>[x(k)+jit(i,others.length),y(z.total)]);h+=`<polyline class="pl" points="${pts.map(q=>q.join(',')).join(' ')}"/>`+pts.map(q=>`<circle class="pt" cx="${q[0]}" cy="${q[1]}" r="4.5"/>`).join('')});
+  meds.forEach((v,k)=>h+=`<line class="md" x1="${x(k)-26}" x2="${x(k)+26}" y1="${y(v)}" y2="${y(v)}"/>`);
+  if(mine){const pts=mine.r.map((z,k)=>[x(k),y(z.total)]);h+=`<polyline class="mel" points="${pts.map(q=>q.join(',')).join(' ')}"/>`+pts.map(q=>`<circle class="mep" cx="${q[0]}" cy="${q[1]}" r="7"/>`).join('')}
+  s.innerHTML=h;
+}
+const roDots=new ResizeObserver(drawDots);roDots.observe($('#dots'));
+
+/* ---------- Équipe : Firebase ---------- */
+async function fbInit(){
+  if(fb)return fb;
+  const base=`https://www.gstatic.com/firebasejs/${FBV}/`;
+  const [A,Au,D]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-database.js')]);
+  const app=A.initializeApp(CFG),auth=Au.getAuth(app),db=D.getDatabase(app);
+  const user=await new Promise((ok,ko)=>{const stop=Au.onAuthStateChanged(auth,u=>{if(u){stop();ok(u)}});Au.signInAnonymously(auth).catch(e=>{stop();ko(e)})});
+  fb={D,db,uid:user.uid};return fb;
+}
+const rref=p=>fb.D.ref(fb.db,'csRooms/'+code+(p?'/'+p:''));
+const roomUrl=c=>location.origin+location.pathname+'#/r/'+c;
+
+async function createRoom(){
+  const b=$('#mk'),m=$('#mkm');b.disabled=true;m.hidden=false;m.textContent='Création de la salle…';
+  try{
+    await fbInit();
+    const L='ABCDEFGHJKLMNPQRSTUVWXYZ';
+    for(let i=0;i<6;i++){
+      let c='';for(let j=0;j<4;j++)c+=L[Math.floor(Math.random()*L.length)];c+=10+Math.floor(Math.random()*90);
+      code=c;
+      try{await fb.D.set(rref('facilitator'),fb.uid);await fb.D.set(rref('createdAt'),Date.now());location.hash='#/r/'+c;b.disabled=false;m.hidden=true;return}catch(e){}
+    }
+    throw new Error('codes');
+  }catch(e){m.textContent='Impossible de créer la salle. Vérifiez votre connexion, ou jouez seul.';b.disabled=false}
+}
+function leaveRoom(){if(unsub){unsub();unsub=null}room=null;code=null;lastKey=''}
+function joinMsg(t){$('#jm').hidden=!t;$('#jm').textContent=t||''}
+async function openRoom(c){
+  leaveRoom();code=c;mode='team';res=[];
+  $('#jt').textContent='Salle '+fcode(c);$('#jf').hidden=true;joinMsg('Connexion à la salle…');show('join',-1);
+  try{await fbInit()}catch(e){joinMsg('Connexion impossible. Vérifiez votre réseau, ou jouez seul depuis l\'accueil.');return}
+  let first=true;
+  unsub=fb.D.onValue(rref(),snap=>{
+    if(code!==c)return;
+    room=snap.val();
+    if(!room||!room.facilitator){if(first){joinMsg('Salle introuvable. Vérifiez le code avec votre animateur.')}return}
+    const host=room.facilitator===fb.uid;
+    if(first){
+      first=false;
+      if(host){renderHost();return}
+      const me=room.players&&room.players[fb.uid];
+      if(!me){joinMsg('');$('#jf').hidden=false;try{$('#jn').value=localStorage.getItem('cs-name')||''}catch(e){}$('#jn').focus();return}
+      const r=me.res||{};res=[r[0],r[1],r[2]].filter(Boolean);
+      if((me.round||0)>=3){room.revealed?teamResults(true):waitView()}else brief(res.length);
+      return;
+    }
+    if(host){if(view==='host')renderHost();else if(view==='res')teamResults();return}
+    if(view==='wait'){room.revealed?teamResults(true):updateWait()}
+    else if(view==='res'&&mode==='team')teamResults();
+  },()=>{joinMsg("Accès à la salle refusé.")});
+}
+async function joinRoom(e){
+  e.preventDefault();
+  const name=$('#jn').value.trim().slice(0,24);if(!name)return;
+  try{localStorage.setItem('cs-name',name)}catch(_){}
+  try{await fb.D.set(rref('players/'+fb.uid),{name,joinedAt:Date.now(),round:0});res=[];brief(0)}
+  catch(_){joinMsg("Impossible d'entrer dans la salle. Réessayez.")}
+}
+function saveRound(k){
+  const r=res[k];
+  return fb.D.update(rref('players/'+fb.uid),{round:k+1,['res/'+k]:r}).then(()=>{saveFailed=false;if(view==='wait')$('#we').hidden=true}).catch(()=>{saveFailed=true;if(view==='wait')$('#we').hidden=false});
+}
+async function retrySave(){for(let k=0;k<res.length;k++)await saveRound(k)}
+
+function waitView(){
+  const lm=$('#loom');
+  if(!lm.children.length)lm.innerHTML=P.map((p,k)=>`<div style="--pc:${p.c}">${p.v.map((_,i)=>`<span style="--i:${k*10+i}"></span>`).join('')}</div>`).join('');
+  show('wait',3);$('#we').hidden=!saveFailed;updateWait();
+  tipI=Math.floor(Math.random()*TIPS.length);$('#tip').textContent=TIPS[tipI];
+  clearInterval(tipT);tipT=setInterval(()=>{const t=$('#tip');t.style.opacity=0;setTimeout(()=>{tipI=(tipI+1)%TIPS.length;t.textContent=TIPS[tipI];t.style.opacity=1},400)},9000);
+}
+function updateWait(){
+  const ps=Object.values((room&&room.players)||{}),n=ps.length,d=ps.filter(p=>(p.round||0)>=3).length;
+  $('#wb').style.width=(n?d/n*100:0)+'%';
+  $('#wt').textContent=d>=n&&n>0?`Tout le monde a terminé : l'animateur va révéler les résultats.`:`${d} participant${d>1?'s':''} sur ${n} ${d>1?'ont':'a'} terminé.`;
 }
 
+function renderHost(){
+  show('host',-1);
+  $('#hc').textContent=fcode(code);$('#hu').textContent=roomUrl(code);
+  if($('#qr').dataset.c!==code)drawQR();
+  const ps=room.players||{},ids=Object.keys(ps).sort((a,b)=>(ps[a].joinedAt||0)-(ps[b].joinedAt||0));
+  const n=ids.length,d=ids.filter(id=>(ps[id].round||0)>=3).length;
+  $('#hn').textContent=n?`${n} participant${n>1?'s':''}`:'En attente des participants';
+  $('#hd').textContent=n?`${d} sur ${n} ${d>1?'ont':'a'} terminé`:'';
+  $('#hp').innerHTML=n?ids.map(id=>{const p=ps[id],r=p.round||0;return `<li><span class="nm">${esc(p.name||'?')}</span><span class="pips">${[0,1,2].map(k=>`<i class="${k<r?'on':''}"></i>`).join('')}</span><span class="pst${r>=3?' ok':''}">${r>=3?'Terminé':'Manche '+(r+1)}</span><button class="x" data-id="${esc(id)}" aria-label="Retirer ${esc(p.name||'')}">Retirer</button></li>`}).join(''):'<li class="empty">Les prénoms apparaîtront ici dès que les participants entreront dans la salle.</li>';
+  const rv=$('#reveal');
+  rv.disabled=d===0;
+  rv.textContent=room.revealed?"Voir les résultats de l'équipe":"Révéler les résultats de l'équipe";
+  $('#rn').textContent=room.revealed?'Résultats déjà révélés.':d===0?'Disponible dès qu\'un participant a terminé.':d<n?`${n-d} participant${n-d>1?'s':''} n'${n-d>1?'ont':'a'} pas encore terminé.`:'Tout le monde a terminé.';
+}
+function drawQR(){
+  const el=$('#qr'),url=roomUrl(code),draw=()=>{try{const q=qrcode(0,'M');q.addData(url);q.make();el.innerHTML=q.createSvgTag(6,0);el.dataset.c=code}catch(e){}};
+  if(window.qrcode)return draw();
+  const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';s.onload=draw;document.head.appendChild(s);
+}
+async function reveal(){
+  if(!room.revealed){try{await fb.D.set(rref('revealed'),true)}catch(e){$('#rn').textContent='La révélation a échoué. Réessayez.';return}}
+  room.revealed=true;teamResults(true);
+}
+
+/* ---------- Navigation ---------- */
+function route(){
+  const m=location.hash.match(/^#\/r\/([A-Za-z0-9-]+)$/);
+  if(m)openRoom(ncode(m[1]));
+  else{leaveRoom();mode='solo';show('home',-1)}
+}
 function copyText(){
-  return ['Une chose à la fois · mes résultats',...res.map((r,k)=>`Manche ${k+1} (${R[k].name}) : ${fmt(r.total)} au total, client A ${fmt(r.done[0])}, B ${fmt(r.done[1])}, C ${fmt(r.done[2])}, délai moyen ${fmt(avg(r.done))}, ${r.err} erreur(s)${R[k].ping?`, ${r.pings} message(s)`:''}`)].join('\n');
+  return ['Une chose à la fois · mes résultats',...res.map((r,k)=>`Manche ${k+1} (${R[k].name}) : ${fmt(r.total)} au total, client A ${fmt(r.done[0])}, B ${fmt(r.done[1])}, C ${fmt(r.done[2])}, délai moyen ${fmt(avg(r.done))}, ${r.err} erreur(s)${k===2?`, ${r.pings} message(s)`:''}`)].join('\n');
 }
-
-$('#go').addEventListener('click',()=>{res=[];brief(0)});
+$('#go').addEventListener('click',()=>{mode='solo';res=[];brief(0)});
+$('#mk').addEventListener('click',createRoom);
+$('#jcf').addEventListener('submit',e=>{e.preventDefault();const c=ncode($('#jc').value);if(c.length>=4)location.hash='#/r/'+c});
+$('#jf').addEventListener('submit',joinRoom);
+$('#jhome').addEventListener('click',()=>{location.hash=''});
+$('#hcopy').addEventListener('click',async e=>{const b=e.currentTarget;try{await navigator.clipboard.writeText(roomUrl(code));b.textContent='Lien copié !'}catch(_){b.textContent='Copiez le lien ci-dessus'}setTimeout(()=>b.textContent='Copier le lien',1800)});
+$('#hp').addEventListener('click',e=>{
+  const b=e.target.closest('.x');if(!b)return;
+  if(!b.classList.contains('arm')){b.classList.add('arm');b.textContent='Confirmer';setTimeout(()=>{b.classList.remove('arm');b.textContent='Retirer'},3000);return}
+  fb.D.remove(rref('players/'+b.dataset.id)).catch(()=>{});
+});
+$('#reveal').addEventListener('click',reveal);
+$('#back').addEventListener('click',renderHost);
+$('#wr').addEventListener('click',retrySave);
 $('#start').addEventListener('click',()=>start(cur));
 $('#restart').addEventListener('click',()=>start(g.r));
-$('#again').addEventListener('click',()=>{res=[];brief(0)});
+$('#again').addEventListener('click',()=>{leaveRoom();if(location.hash)history.replaceState(null,'',location.pathname+location.search);mode='solo';res=[];brief(0)});
 $('#copy').addEventListener('click',async e=>{const b=e.currentTarget;try{await navigator.clipboard.writeText(copyText());b.textContent='Copié !'}catch(_){b.textContent='Copie impossible ici'}setTimeout(()=>b.textContent='Copier mes résultats',1800)});
 inp.addEventListener('input',()=>check(false));
 inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check(true)}});
@@ -317,6 +649,8 @@ pin.addEventListener('input',pingInput);
 pin.addEventListener('keydown',e=>{if(e.key==='Enter')e.preventDefault()});
 $('#v-play').addEventListener('click',e=>{if(g&&g.on&&!g.pOpen&&e.target!==inp&&e.target.id!=='restart')inp.focus()});
 $('#ping').addEventListener('click',()=>pin.focus());
+window.addEventListener('hashchange',route);
+route();
 }
 </script>
 </body>
