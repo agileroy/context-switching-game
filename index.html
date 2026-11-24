@@ -192,7 +192,7 @@ details ol{padding-left:22px}details li{margin:6px 0}
 
 <section id="v-home">
   <h2>Trois projets, trois clients, un seul cerveau.</h2>
-  <p class="lead">Vous allez livrer trois petits projets, trois fois, en changeant seulement la façon de travailler. Le chrono enregistre le moment où chaque client reçoit son projet.</p>
+  <p class="lead">Vous allez faire le même exercice trois fois, avec une règle différente à chaque manche. À chaque manche, allez le plus vite possible !</p>
   <h3 class="h3b" style="margin-top:36px">Comment voulez-vous jouer ?</h3>
   <div class="choices" style="margin-top:16px">
     <div class="choice main">
@@ -225,7 +225,7 @@ details ol{padding-left:22px}details li{margin:6px 0}
   <details>
     <summary>Guide de l'animateur (15 min)</summary>
     <ol>
-      <li><b>2 min</b> : créez une salle et projetez votre écran. Chacun ouvre le lien ou scanne le QR code, puis entre son prénom. Ne dites rien sur l'objectif de l'atelier.</li>
+      <li><b>2 min</b> : créez une salle et projetez votre écran. Chacun ouvre le lien ou scanne le QR code, puis entre son prénom. Demandez juste d'aller le plus vite possible : ne dites rien sur l'objectif de l'atelier ni sur ce qui est mesuré, la surprise vient avec les résultats.</li>
       <li><b>6 min</b> : chacun joue les trois manches à son rythme. Votre écran montre où en est chaque participant ; les plus rapides patientent sur un écran d'attente.</li>
       <li><b>1 min</b> : quand tout le monde a terminé, cliquez sur « Révéler les résultats de l'équipe ». Les résultats s'affichent en même temps chez tout le monde.</li>
       <li><b>6 min</b> : débriefez avec le nuage de points (presque tous les traits montent avec les interruptions) et les questions proposées, puis terminez sur une action concrète.</li>
@@ -269,13 +269,14 @@ details ol{padding-left:22px}details li{margin:6px 0}
   <p class="note ok" id="prev" hidden></p>
   <h2 id="bt"></h2>
   <p class="lead" id="br"></p>
+  <p class="note ok" style="max-width:62ch">Allez le plus vite possible !</p>
   <div class="chips" id="bc"></div>
   <div class="row"><button class="btn" id="start">Je suis prêt·e</button></div>
 </section>
 
 <section id="v-play" hidden>
   <div class="bar">
-    <div><div class="stat" id="pr"></div><div class="timer" id="tm">0,0 s</div></div>
+    <div><div class="stat" id="pr"></div><div class="timer" id="tm">0 / 30</div></div>
     <div class="row" style="margin:0;gap:28px">
       <div class="stat"><b id="er">0</b>erreurs</div>
       <div class="stat" id="pgw" hidden><b id="pg">0</b>messages</div>
@@ -409,7 +410,7 @@ function brief(r){
   cur=r;
   const pv=res[r-1];
   $('#prev').hidden=!pv;
-  if(pv)$('#prev').textContent=`Manche ${r} terminée en ${fmt(pv.total)}, avec ${pv.err} erreur${pv.err>1?'s':''}. On passe à la suite.`;
+  if(pv)$('#prev').textContent=`Manche ${r} terminée, avec ${pv.err} erreur${pv.err>1?'s':''}. On passe à la suite.`;
   $('#bt').textContent=`Manche ${r+1} · ${R[r].name}`;
   $('#br').textContent=R[r].rule;
   $('#bc').innerHTML=seq(r).slice(0,R[r].row?7:12).map(([p,i])=>`<span class="chip" style="--pc:${P[p].c}">${P[p].v[i]}</span>`).join('')+'<span class="chip more">…</span>'+(R[r].ping?'<span class="chip" style="--pc:var(--hi);color:#0e1430">+ messages</span>':'');
@@ -423,7 +424,7 @@ function start(r){
   g={r,s:seq(r),pos:0,err:0,pings:0,pingMs:0,done:[0,0,0],t0:0,on:false,pt:0,pOpen:false};
   board();
   $('#pr').textContent=`Manche ${r+1} · ${R[r].name}`;
-  $('#er').textContent='0';$('#pg').textContent='0';$('#pgw').hidden=!R[r].ping;$('#tm').textContent='0,0 s';
+  $('#er').textContent='0';$('#pg').textContent='0';$('#pgw').hidden=!R[r].ping;$('#tm').textContent='0 / 30';
   inp.value='';inp.disabled=true;
   show('play',r);mark();
   const cd=document.createElement('div');cd.className='count';$('#board').appendChild(cd);
@@ -433,7 +434,7 @@ function start(r){
     if(R[r].ping)sched(3500+Math.random()*4000);
   },800);
 }
-function tick(){if(!g.on)return;$('#tm').textContent=fmt(performance.now()-g.t0);raf=requestAnimationFrame(tick)}
+function tick(){}
 function mark(){
   document.querySelectorAll('.cell.act').forEach(c=>c.classList.remove('act'));
   document.querySelectorAll('.col.cur').forEach(c=>c.classList.remove('cur'));
@@ -447,8 +448,8 @@ function check(enter){
   const [p,i]=g.s[g.pos],exp=P[p].v[i];
   if(v===exp){
     const c=$(`#c${p}-${i}`);c.textContent=exp;c.classList.add('f');inp.value='';
-    if(i===9){g.done[p]=performance.now()-g.t0;const st=$('#st'+p);st.textContent='livré · '+fmt(g.done[p]);st.className='ok'}
-    g.pos++;
+    if(i===9){g.done[p]=performance.now()-g.t0;const st=$('#st'+p);st.textContent='livré';st.className='ok'}
+    g.pos++;$('#tm').textContent=g.pos+' / 30';
     if(g.pos>=g.s.length)return finish();
     mark();
   }else if(enter||!exp.startsWith(v)){
@@ -478,7 +479,7 @@ function pingInput(){
 }
 function finish(){
   g.on=false;clearTimeout(g.pt);cancelAnimationFrame(raf);mark();
-  const total=performance.now()-g.t0;$('#tm').textContent=fmt(total);inp.disabled=true;
+  const total=performance.now()-g.t0;inp.disabled=true;
   const r=g.r;
   res[r]={total:Math.round(total),done:g.done.map(Math.round),err:g.err,pings:g.pings,pingMs:Math.round(g.pingMs)};
   if(mode==='team')saveRound(r);
