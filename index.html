@@ -41,6 +41,11 @@ h3{font-size:20px;font-weight:600}
 .projs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:28px}
 .proj{background:var(--card);border-radius:14px;padding:18px;border-top:6px solid var(--pc)}
 .proj b{display:block;font:800 22px Archivo,sans-serif}.proj span{color:var(--mut);font-size:15px}
+.howto{margin-top:40px;background:var(--card);border-radius:16px;padding:clamp(18px,3vw,28px)}
+.howto>p{margin:10px 0 0;max-width:70ch}
+.plist3{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px}
+.plist3 li{display:flex;align-items:center;gap:12px}
+.mini{flex:none;min-width:84px;padding:6px 10px;border-radius:8px;background:var(--pc);color:#fff;font:800 15px Archivo,sans-serif;text-align:center;white-space:nowrap}
 .choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:28px}
 .choice{border:2px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px}
 .choice p{margin:0;color:var(--mut)}
@@ -153,12 +158,8 @@ details ol{padding-left:22px}details li{margin:6px 0}
 <section id="v-home">
   <h2>Trois projets, trois clients, un seul cerveau.</h2>
   <p class="lead">Vous allez livrer trois petits projets, trois fois, en changeant seulement la façon de travailler. Le chrono enregistre le moment où chaque client reçoit son projet.</p>
-  <div class="projs">
-    <div class="proj" style="--pc:var(--a)"><b>Projet A</b><span>Les lettres de A à J</span></div>
-    <div class="proj" style="--pc:var(--b)"><b>Projet B</b><span>Les nombres de 1 à 10</span></div>
-    <div class="proj" style="--pc:var(--c)"><b>Projet C</b><span>Les chiffres romains de I à X</span></div>
-  </div>
-  <div class="choices">
+  <h3 class="h3b" style="margin-top:36px">Comment voulez-vous jouer ?</h3>
+  <div class="choices" style="margin-top:16px">
     <div class="choice main">
       <h3>Animer une équipe</h3>
       <p>Créez une salle et partagez le lien. Chacun joue de son côté, puis vous révélez les résultats de tout le groupe.</p>
@@ -176,7 +177,16 @@ details ol{padding-left:22px}details li{margin:6px 0}
       <button class="btn alt" id="go">Jouer seul</button>
     </div>
   </div>
-  <p class="note">Pendant le jeu, tapez la valeur de la case en jaune. Une bonne réponse passe toute seule à la case suivante, une mauvaise compte comme une erreur. Ça marche au clavier comme sur téléphone.</p>
+  <div class="howto">
+    <h3 class="h3b">Le principe du jeu</h3>
+    <p>Dans chaque manche, vous livrez les trois mêmes petits projets :</p>
+    <ul class="plist3">
+      <li style="--pc:var(--a)"><span class="mini">A B C…</span><span><b>Projet A</b> · les lettres de A à J</span></li>
+      <li style="--pc:var(--b)"><span class="mini">1 2 3…</span><span><b>Projet B</b> · les nombres de 1 à 10</span></li>
+      <li style="--pc:var(--c)"><span class="mini">I II III…</span><span><b>Projet C</b> · les chiffres romains de I à X</span></li>
+    </ul>
+    <p>Pendant le jeu, tapez la valeur de la case en jaune. Une bonne réponse passe toute seule à la case suivante, une mauvaise compte comme une erreur. Ça marche au clavier comme sur téléphone.</p>
+  </div>
   <details>
     <summary>Guide de l'animateur (15 min)</summary>
     <ol>
