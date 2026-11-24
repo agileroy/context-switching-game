@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <title>Une chose à la fois</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -22,6 +23,12 @@ h1,h2,h3{font-family:Archivo,Inter,sans-serif;line-height:1.05;text-wrap:balance
 .hero{background:var(--blue);color:#fff;padding-bottom:clamp(20px,3vw,32px)}
 .hero p{margin:0 0 6px;opacity:.85}
 .hero h1{font-size:clamp(34px,6vw,52px);font-weight:800}
+.toprow{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.theme{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;border:2px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
+.theme:hover{background:rgba(255,255,255,.24)}.theme:focus-visible{outline:3px solid var(--hi);outline-offset:3px}
+.theme .sun{display:none}
+:root[data-theme=dark] .theme .sun{display:block}:root[data-theme=dark] .theme .moon{display:none}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .theme .sun{display:block}:root:not([data-theme=light]) .theme .moon{display:none}}
 .steps{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:20px 0 0;counter-reset:s}
 .steps[hidden]{display:none}
 .steps li{counter-increment:s;padding:6px 12px 6px 8px;border-radius:99px;background:rgba(255,255,255,.14);font-size:14px;white-space:nowrap}
@@ -148,8 +155,14 @@ details ol{padding-left:22px}details li{margin:6px 0}
 </head>
 <body>
 <header class="band hero"><div class="wrap">
-  <p>Atelier context switching · environ 15 minutes</p>
-  <h1>Une chose à la fois</h1>
+  <div class="toprow">
+    <div><p>Atelier context switching · environ 15 minutes</p>
+    <h1>Une chose à la fois</h1></div>
+    <button class="theme" id="themeBtn" type="button" aria-label="Passer en thème clair ou sombre" title="Thème clair / sombre">
+      <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+    </button>
+  </div>
   <ol class="steps" id="steps" hidden><li>Multitâche</li><li>Focus</li><li>Focus interrompu</li><li>Résultats</li></ol>
 </div></header>
 
@@ -659,6 +672,7 @@ pin.addEventListener('input',pingInput);
 pin.addEventListener('keydown',e=>{if(e.key==='Enter')e.preventDefault()});
 $('#v-play').addEventListener('click',e=>{if(g&&g.on&&!g.pOpen&&e.target!==inp&&e.target.id!=='restart')inp.focus()});
 $('#ping').addEventListener('click',()=>pin.focus());
+$('#themeBtn').addEventListener('click',()=>{const r=document.documentElement,c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),n=c==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('theme',n)}catch(e){}drawDots()});
 window.addEventListener('hashchange',route);
 route();
 }
